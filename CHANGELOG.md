@@ -4,6 +4,10 @@ Every change, update, bug fix or new feature will be documented in this file as 
 
 <a name="Unreleased"></a>
 
+### 1.4.0
+#### New Features
+*   ZoomOnMarkersSet
+    * Enables map to zoom on a set of markers without mouting them 
 ### 0.4.0
 
 #### New Features
