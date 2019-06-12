@@ -94,6 +94,13 @@ export class HEREMap
     const viewBounds = markersGroup.getBounds() ;
     if (viewBounds) { map.setViewBounds(viewBounds, animate); }
   }
+  public zoomOnMarkersSet(markersSet: Array<H.map.DomMarker>, animate: boolean = true){
+    const { map } = this.state;
+    const markersGroupSet = new H.map.Group();
+    markersSet.map(m => markersGroupSet.addObject(m));
+    const viewBounds = markersGroupSet.getBounds();
+    if (viewBounds) { map.setViewBounds(viewBounds, animate); }
+  }
   public getChildContext() {
     const {map, markersGroup, routesGroup} = this.state;
     return {map, markersGroup, routesGroup};
