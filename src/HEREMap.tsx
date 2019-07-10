@@ -39,7 +39,7 @@ export interface HEREMapState {
   map?: H.Map;
   behavior?: H.mapevents.Behavior;
   ui?: H.ui.UI;
-  markersGroup?: H.map.Group;
+  markersGroups: Record<string, H.map.Group>;
   routesGroup?: H.map.Group;
   trafficLayer?: boolean;
 }
@@ -56,8 +56,9 @@ export class HEREMap
   implements React.ChildContextProvider<HEREMapChildContext> {
   public static childContextTypes = {
     map: PropTypes.object,
-    markersGroup: PropTypes.object,
     routesGroup: PropTypes.object,
+    addToMarkerGroup: PropTypes.func,
+    removeFromMarkerGroup: PropTypes.func,
   };
 
   // add typedefs for the HMapMethods mixin
@@ -67,7 +68,9 @@ export class HEREMap
   public setZoom: (zoom: number) => void;
 
   // add the state property
-  public state: HEREMapState = {};
+  public state: HEREMapState = {
+    markersGroups: {},
+  };
   public truckOverlayLayer: H.map.layer.TileLayer;
   public truckOverCongestionLayer: H.map.layer.TileLayer;
   public defaultLayers: any;
@@ -83,15 +86,17 @@ export class HEREMap
     this.debouncedResizeMap = debounce(this.resizeMap, 200);
     this.zoomOnMarkers = this.zoomOnMarkers.bind(this);
     this.screenToGeo = this.screenToGeo.bind(this);
+    this.addToMarkerGroup = this.addToMarkerGroup.bind(this);
+    this.removeFromMarkerGroup = this.removeFromMarkerGroup.bind(this);
   }
   public screenToGeo(x: number, y: number): H.geo.Point {
     const { map } = this.state;
     return map.screenToGeo(x, y);
   }
-  public zoomOnMarkers(animate: boolean = true) {
-    const { map, markersGroup } = this.state;
-    if (!markersGroup) { return; }
-    const viewBounds = markersGroup.getBounds() ;
+  public zoomOnMarkers(animate: boolean = true, group: string = 'default') {
+    const { map, markersGroups } = this.state;
+    if (!markersGroups[group]) { return; }
+    const viewBounds = markersGroups[group].getBounds() ;
     if (viewBounds) { map.setViewBounds(viewBounds, animate); }
   }
   public zoomOnMarkersSet(markersSet: Array<H.map.DomMarker>, animate: boolean = true){
@@ -101,33 +106,53 @@ export class HEREMap
     const viewBounds = markersGroupSet.getBounds();
     if (viewBounds) { map.setViewBounds(viewBounds, animate); }
   }
+  public addToMarkerGroup(marker: H.map.Marker, group: string) {
+    const { map, markersGroups } = this.state
+    if (!markersGroups[group]) {
+      markersGroups[group] = new H.map.Group();
+      map.addObject(markersGroups[group]);
+    }
+    markersGroups[group].addObject(marker);
+  }
+  public removeFromMarkerGroup(marker: H.map.Marker, group: string) {
+    const { map, markersGroups } = this.state
+    if (markersGroups[group]) {
+      markersGroups[group].removeObject(marker);
+      if (markersGroups[group].getObjects().length === 0) {
+        map.removeObject(markersGroups[group]);
+        markersGroups[group] = null;
+      }
+    }
+  }
   public getChildContext() {
-    const {map, markersGroup, routesGroup} = this.state;
-    return {map, markersGroup, routesGroup};
+    const {map, routesGroup} = this.state;
+    const addToMarkerGroup = this.addToMarkerGroup;
+    const removeFromMarkerGroup = this.addToMarkerGroup;
+    return {map, addToMarkerGroup, removeFromMarkerGroup, routesGroup};
   }
   public getTruckLayerProvider(congestion: boolean): H.map.provider.ImageTileProvider.Options {
     const { appCode, appId } = this.props;
     return {
-     max: 20,
-     min: 8,
-     getURL(col, row, level) {
-       return ["https://",
-       "1.base.maps.cit.api.here.com/maptile/2.1/truckonlytile/newest/normal.day/",
-       level,
-       "/",
-       col,
-       "/",
-       row,
-       "/256/png8",
-       "?style=fleet",
-       "&app_code=",
-       appCode,
-       "&app_id=",
-       appId,
-       congestion ? "&congestion" : "",
-       ].join("");
-     },
-   };
+      max: 20,
+      min: 8,
+      getURL(col, row, level) {
+        return ["https://",
+        "1.base.maps.cit.api.here.com/maptile/2.1/truckonlytile/newest/normal.day/",
+        level,
+        "/",
+        col,
+        "/",
+        row,
+        "/256/png8",
+        "?style=fleet",
+        "&app_code=",
+        appCode,
+        "&app_id=",
+        appId,
+        congestion ? "&congestion" : "",
+        ].join("");
+      },
+    };
   }
   public componentDidMount() {
     const {
@@ -180,9 +205,7 @@ export class HEREMap
           zoom,
         },
       );
-      const markersGroup = new H.map.Group();
       const routesGroup = new H.map.Group();
-      map.addObject(markersGroup);
       map.addObject(routesGroup);
       if (this.props.transportData) {
         if (congestion) {
@@ -214,18 +237,19 @@ export class HEREMap
         } else {
           map.setBaseLayer(this.defaultLayers.normal.traffic);
         }
-       } else {
+      } else {
         if (useSatellite) {
-            map.setBaseLayer(this.defaultLayers.satellite.map);
-        } else { map.setBaseLayer(this.defaultLayers.normal.map);
+          map.setBaseLayer(this.defaultLayers.satellite.map);
+        } else {
+          map.setBaseLayer(this.defaultLayers.normal.map);
         }
-       }
+      }
 
       // make the map resize when the window gets resized
       window.addEventListener("resize", this.debouncedResizeMap);
 
       // attach the map object to the component"s state
-      this.setState({ map, markersGroup, routesGroup }, () => onMapAvailable(this.state));
+      this.setState({ map, routesGroup }, () => onMapAvailable(this.state));
     });
   }
 
@@ -241,9 +265,9 @@ export class HEREMap
     if (!isEqual(nextProps, props)) {
       if (nextProps.trafficLayer) {
         if (nextProps.useSatellite) {
-         map.setBaseLayer(this.defaultLayers.satellite.traffic); } else {
-         map.setBaseLayer(this.defaultLayers.normal.traffic);
-         }
+          map.setBaseLayer(this.defaultLayers.satellite.traffic); } else {
+          map.setBaseLayer(this.defaultLayers.normal.traffic);
+        }
       } else {
           if (nextProps.useSatellite) {
             map.setBaseLayer(this.defaultLayers.satellite.map); } else {

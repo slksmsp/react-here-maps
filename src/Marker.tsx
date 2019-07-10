@@ -16,12 +16,14 @@ export interface MarkerProps extends H.map.Marker.Options, H.geo.IPoint {
   data?: any;
   draggable?: boolean;
   children?: React.ReactElement<any>;
+  group?: string;
 }
 
 // declare an interface containing the potential context parameters
 export interface MarkerContext {
   map: H.Map;
-  markersGroup: H.map.Group;
+  addToMarkerGroup: (marker: H.map.Marker, group: string) => void;
+  removeFromMarkerGroup: (marker: H.map.Marker, group: string) => void;
 }
 
 // export the Marker React component from this module
@@ -29,9 +31,10 @@ export class Marker extends React.Component<MarkerProps, object> {
   // define the context types that are passed down from a <HEREMap> instance
   public static contextTypes = {
     map: PropTypes.object,
-    markersGroup: PropTypes.object,
+    addToMarkerGroup: PropTypes.func,
+    removeFromMarkerGroup: PropTypes.func,
   };
-  public static defaultProps = {draggable: false};
+  public static defaultProps = {draggable: false, group: 'default'};
   public context: MarkerContext;
 
   private marker: H.map.DomMarker | H.map.Marker;
@@ -43,12 +46,13 @@ export class Marker extends React.Component<MarkerProps, object> {
     // Rerender the marker if child props change
     const nextChildProps = nextProps.children && nextProps.children.props
     const childProps = this.props.children && this.props.children.props
-    if (nextChildProps && !isEqual(nextChildProps, childProps)) {
-      const { markersGroup } = this.context;
+    if ((nextChildProps && !isEqual(nextChildProps, childProps)) ||
+      nextProps.group !== this.props.group) {
+      const { removeFromMarkerGroup } = this.context;
       if (this.marker) {
-        markersGroup.removeObject(this.marker);
+        removeFromMarkerGroup(this.marker, this.props.group);
       }
-      this.marker = this.renderChildren(nextProps.children, nextProps.lat, nextProps.lng)  
+      this.marker = this.renderChildren(nextProps.children, nextProps.lat, nextProps.lng, nextProps.group)  
       return
     }  
     if (nextProps.lat !== this.props.lat || nextProps.lng !== this.props.lng) {
@@ -60,10 +64,10 @@ export class Marker extends React.Component<MarkerProps, object> {
   }
   // remove the marker on unmount of the component
   public componentWillUnmount() {
-    const { markersGroup } = this.context;
+    const { removeFromMarkerGroup } = this.context;
 
     if (this.marker) {
-      markersGroup.removeObject(this.marker);
+      removeFromMarkerGroup(this.marker, this.props.group);
     }
   }
 
@@ -76,8 +80,8 @@ export class Marker extends React.Component<MarkerProps, object> {
     return null;
   }
 
-  private renderChildren(children: any, lat: number, lng: number) {
-    const { markersGroup } = this.context;
+  private renderChildren(children: any, lat: number, lng: number, group: string) {
+    const { addToMarkerGroup } = this.context;
 
     // if children are provided, we render the provided react
     // code to an html string
@@ -95,23 +99,24 @@ export class Marker extends React.Component<MarkerProps, object> {
     const marker = new H.map.DomMarker({lat, lng}, {icon});
     marker.draggable = this.props.draggable;
     marker.setData(this.props.data);
-    markersGroup.addObject(marker);
+    addToMarkerGroup(marker, group);
     return marker
   }
 
   private addMarkerToMap() {
-    const { markersGroup } = this.context;
+    const { addToMarkerGroup } = this.context;
 
     const {
       children,
       bitmap,
       lat,
       lng,
+      group,
     } = this.props;
 
     let marker: H.map.DomMarker | H.map.Marker;
     if (React.Children.count(children) > 0) {
-      marker = this.renderChildren(children, lat, lng)
+      marker = this.renderChildren(children, lat, lng, group)
     } else if (bitmap) {
       // if we have an image url and no react children, create a
       // regular icon instance
@@ -119,11 +124,11 @@ export class Marker extends React.Component<MarkerProps, object> {
 
       // then create a normal marker instance and attach it to the map
       marker = new H.map.Marker({lat, lng}, {icon});
-      markersGroup.addObject(marker);
+      addToMarkerGroup(marker, group);
     } else {
       // create a default marker at the provided location
       marker = new H.map.Marker({lat, lng});
-      markersGroup.addObject(marker);
+      addToMarkerGroup(marker, group);
     }
 
     this.marker = marker;
