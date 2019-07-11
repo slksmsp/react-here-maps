@@ -3,7 +3,10 @@
 Every change, update, bug fix or new feature will be documented in this file as new releases are published. The entire project is written in TypeScript, so references to updates to type definitions, typings dependencies etc. will be included here.
 
 <a name="Unreleased"></a>
-
+### 1.5.0
+### New Features
+*   ZoomOnMarkers
+    * Now enables you to Specify group to zoom onto
 ### 1.4.0
 #### New Features
 *   ZoomOnMarkersSet
