@@ -127,7 +127,7 @@ export class HEREMap
   public getChildContext() {
     const {map, routesGroup} = this.state;
     const addToMarkerGroup = this.addToMarkerGroup;
-    const removeFromMarkerGroup = this.addToMarkerGroup;
+    const removeFromMarkerGroup = this.removeFromMarkerGroup;
     return {map, addToMarkerGroup, removeFromMarkerGroup, routesGroup};
   }
   public getTruckLayerProvider(congestion: boolean): H.map.provider.ImageTileProvider.Options {
