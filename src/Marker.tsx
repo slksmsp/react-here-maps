@@ -55,6 +55,9 @@ export class Marker extends React.Component<MarkerProps, object> {
       this.marker = this.renderChildren(nextProps);
       return;
     }
+    if (!this.marker) {
+      return;
+    }
     if (nextProps.data !== this.props.data) {
       this.marker.setData(nextProps.data);
     }
