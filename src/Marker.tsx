@@ -30,8 +30,8 @@ export interface MarkerContext {
 export class Marker extends React.Component<MarkerProps, object> {
   // define the context types that are passed down from a <HEREMap> instance
   public static contextTypes = {
-    map: PropTypes.object,
     addToMarkerGroup: PropTypes.func,
+    map: PropTypes.object,
     removeFromMarkerGroup: PropTypes.func,
   };
   public static defaultProps = {draggable: false, group: 'default'};
@@ -44,17 +44,23 @@ export class Marker extends React.Component<MarkerProps, object> {
   // change the position automatically if the props get changed
   public componentWillReceiveProps(nextProps: MarkerProps) {
     // Rerender the marker if child props change
-    const nextChildProps = nextProps.children && nextProps.children.props
-    const childProps = this.props.children && this.props.children.props
+    const nextChildProps = nextProps.children && nextProps.children.props;
+    const childProps = this.props.children && this.props.children.props;
     if ((nextChildProps && !isEqual(nextChildProps, childProps)) ||
       nextProps.group !== this.props.group) {
       const { removeFromMarkerGroup } = this.context;
       if (this.marker) {
         removeFromMarkerGroup(this.marker, this.props.group);
       }
-      this.marker = this.renderChildren(nextProps.children, nextProps.lat, nextProps.lng, nextProps.group)  
-      return
-    }  
+      this.marker = this.renderChildren(nextProps);
+      return;
+    }
+    if (nextProps.data !== this.props.data) {
+      this.marker.setData(nextProps.data);
+    }
+    if (nextProps.draggable !== this.props.draggable) {
+      this.marker.draggable = true;
+    }
     if (nextProps.lat !== this.props.lat || nextProps.lng !== this.props.lng) {
       this.setPosition({
         lat: nextProps.lat,
@@ -62,6 +68,7 @@ export class Marker extends React.Component<MarkerProps, object> {
       });
     }
   }
+
   // remove the marker on unmount of the component
   public componentWillUnmount() {
     const { removeFromMarkerGroup } = this.context;
@@ -80,14 +87,14 @@ export class Marker extends React.Component<MarkerProps, object> {
     return null;
   }
 
-  private renderChildren(children: any, lat: number, lng: number, group: string) {
+  private renderChildren(props: MarkerProps) {
     const { addToMarkerGroup } = this.context;
 
     // if children are provided, we render the provided react
     // code to an html string
     const html = ReactDOMServer.renderToStaticMarkup((
       <div className="dom-marker">
-        {children}
+        {props.children}
       </div>
     ));
 
@@ -96,11 +103,12 @@ export class Marker extends React.Component<MarkerProps, object> {
 
     // then create a dom marker instance and attach it to the map,
     // provided via context
+    const { lat, lng } = props;
     const marker = new H.map.DomMarker({lat, lng}, {icon});
-    marker.draggable = this.props.draggable;
-    marker.setData(this.props.data);
-    addToMarkerGroup(marker, group);
-    return marker
+    marker.draggable = props.draggable;
+    marker.setData(props.data);
+    addToMarkerGroup(marker, props.group);
+    return marker;
   }
 
   private addMarkerToMap() {
@@ -116,7 +124,7 @@ export class Marker extends React.Component<MarkerProps, object> {
 
     let marker: H.map.DomMarker | H.map.Marker;
     if (React.Children.count(children) > 0) {
-      marker = this.renderChildren(children, lat, lng, group)
+      marker = this.renderChildren(this.props);
     } else if (bitmap) {
       // if we have an image url and no react children, create a
       // regular icon instance
