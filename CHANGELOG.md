@@ -4,6 +4,11 @@ Every change, update, bug fix or new feature will be documented in this file as 
 
 <a name="Unreleased"></a>
 
+### 1.5.3
+### Bug fixes
+*   Markers
+    * Fixed an issue that caused markers to crash on first render.
+
 ### 1.5.2
 ### Bug fixes
 *   Markers
