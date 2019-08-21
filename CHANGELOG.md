@@ -3,6 +3,13 @@
 Every change, update, bug fix or new feature will be documented in this file as new releases are published. The entire project is written in TypeScript, so references to updates to type definitions, typings dependencies etc. will be included here.
 
 <a name="Unreleased"></a>
+
+### 1.5.1
+### Bug fixes
+*   Markers
+    * Fixed an issue that caused markers to not be removed from the map correctly.
+
+
 ### 1.5.0
 ### New Features
 *   ZoomOnMarkers
