@@ -4,6 +4,22 @@ Every change, update, bug fix or new feature will be documented in this file as 
 
 <a name="Unreleased"></a>
 
+### 1.5.2
+### Bug fixes
+*   Markers
+    * Fixed an issue that caused markers to not be removed from the map correctly.
+
+### 1.5.1
+* Skipped
+
+### 1.5.0
+### New Features
+*   ZoomOnMarkers
+    * Now enables you to Specify group to zoom onto
+### 1.4.0
+#### New Features
+*   ZoomOnMarkersSet
+    * Enables map to zoom on a set of markers without mouting them 
 ### 0.4.0
 
 #### New Features
