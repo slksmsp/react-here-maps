@@ -46,8 +46,7 @@ export class Marker extends React.Component<MarkerProps, object> {
     // Rerender the marker if child props change
     const nextChildProps = nextProps.children && nextProps.children.props;
     const childProps = this.props.children && this.props.children.props;
-    if ((nextChildProps && !isEqual(nextChildProps, childProps)) ||
-      nextProps.group !== this.props.group) {
+    if (nextProps.group !== this.props.group) {
       const { removeFromMarkerGroup } = this.context;
       if (this.marker) {
         removeFromMarkerGroup(this.marker, this.props.group);
@@ -57,6 +56,14 @@ export class Marker extends React.Component<MarkerProps, object> {
     }
     if (!this.marker) {
       return;
+    }
+    if ((nextChildProps && !isEqual(nextChildProps, childProps))) {
+      const html = ReactDOMServer.renderToStaticMarkup((
+        <div className="dom-marker">
+          {nextProps.children}
+        </div>
+      ));
+      this.marker.setIcon(html);
     }
     if (nextProps.data !== this.props.data) {
       this.marker.setData(nextProps.data);
