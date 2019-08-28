@@ -43,6 +43,9 @@ export class Marker extends React.Component<MarkerProps, object> {
   }
   // change the position automatically if the props get changed
   public componentWillReceiveProps(nextProps: MarkerProps) {
+    if (!this.context.map) {
+      return;
+    }
     // Rerender the marker if child props change
     const nextChildProps = nextProps.children && nextProps.children.props;
     const childProps = this.props.children && this.props.children.props;
@@ -90,6 +93,7 @@ export class Marker extends React.Component<MarkerProps, object> {
     return null;
   }
 
+  // Note: Only call this when map is already mounted.
   private renderChildren(props: MarkerProps) {
     const { addToMarkerGroup } = this.context;
 
@@ -114,6 +118,7 @@ export class Marker extends React.Component<MarkerProps, object> {
     return marker;
   }
 
+  // Note: Only call this when map is already mounted.
   private addMarkerToMap() {
     const { addToMarkerGroup } = this.context;
 
