@@ -9,6 +9,13 @@ import * as isEqual from "react-fast-compare";
 import getDomMarkerIcon from "./utils/get-dom-marker-icon";
 import getMarkerIcon from "./utils/get-marker-icon";
 
+class MapMissing extends Error {
+  constructor () {
+    super('Map has to be loaded before performing this action')
+  }
+}
+
+
 // declare an interface containing the required and potential
 // props that can be passed to the HEREMap Marker componengetMartkerIdt
 export interface MarkerProps extends H.map.Marker.Options, H.geo.IPoint {
@@ -43,6 +50,9 @@ export class Marker extends React.Component<MarkerProps, object> {
   }
   // change the position automatically if the props get changed
   public componentWillReceiveProps(nextProps: MarkerProps) {
+    if (!this.context.map) {
+      return;
+    }
     // Rerender the marker if child props change
     const nextChildProps = nextProps.children && nextProps.children.props;
     const childProps = this.props.children && this.props.children.props;
@@ -98,7 +108,10 @@ export class Marker extends React.Component<MarkerProps, object> {
   }
 
   private renderChildren(props: MarkerProps) {
-    const { addToMarkerGroup } = this.context;
+    const { addToMarkerGroup, map } = this.context;
+    if (!map) {
+      throw new MapMissing()
+    }
 
     // if children are provided, we render the provided react
     // code to an html string
@@ -122,7 +135,10 @@ export class Marker extends React.Component<MarkerProps, object> {
   }
 
   private addMarkerToMap() {
-    const { addToMarkerGroup } = this.context;
+    const { addToMarkerGroup, map } = this.context;
+    if (!map) {
+      throw new MapMissing()
+    }
 
     const {
       children,
