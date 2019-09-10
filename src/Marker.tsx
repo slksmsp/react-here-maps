@@ -73,7 +73,7 @@ export class Marker extends React.Component<MarkerProps, object> {
           {nextProps.children}
         </div>
       ));
-      this.marker.setIcon(html);
+      this.marker.setIcon(getDomMarkerIcon(html));
     }
     if (nextProps.data !== this.props.data) {
       this.marker.setData(nextProps.data);
