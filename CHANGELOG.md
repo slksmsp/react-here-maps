@@ -4,6 +4,12 @@ Every change, update, bug fix or new feature will be documented in this file as 
 
 <a name="Unreleased"></a>
 
+### 1.5.4
+### Bug fixes
+*   Markers
+    * Fixed rerendering markers when map is not mounted yet.
+    * Fixed needlessly removing and readding markers everytime a change to their props happened.
+
 ### 1.5.3
 ### Bug fixes
 *   Markers
