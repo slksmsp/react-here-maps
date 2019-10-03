@@ -4,6 +4,7 @@
 
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import * as shallowCompare from "react-addons-shallow-compare";
 
 export interface Coordinates {
   lat: number;
@@ -49,13 +50,8 @@ export class Route extends React.Component<RoutesProps, object> {
 
   private route: H.geo.LineString;
   private routeLine: H.map.Polyline;
-  public componentWillReceiveProps(nextProps: RoutesProps) {
-    const { map, routesGroup } = this.context;
-    // it's cheaper to remove and add instead of deep comparision
-    if (this.routeLine) {
-      routesGroup.removeObject(this.routeLine);
-    }
-    this.addRouteToMap(nextProps)
+  public shouldComponentUpdate(nextProps: RoutesProps, nextState: {}): boolean {
+    return shallowCompare(this, nextProps, nextState)
   }
   // remove the marker on unmount of the component
   public componentWillUnmount() {
@@ -67,12 +63,13 @@ export class Route extends React.Component<RoutesProps, object> {
   }
 
   public render(): JSX.Element {
-    const {map} = this.context;
-
-    if (map && !this.route) {
+    const { map, routesGroup } = this.context;
+    if (map) {
+      if (this.routeLine) {
+        routesGroup.removeObject(this.routeLine);
+      }
       this.addRouteToMap(this.props);
     }
-
     return null;
   }
 
