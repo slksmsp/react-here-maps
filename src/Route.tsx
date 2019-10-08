@@ -4,7 +4,6 @@
 
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import * as shallowCompare from "react-addons-shallow-compare";
 
 export interface Coordinates {
   lat: number;
@@ -30,7 +29,7 @@ export interface RoutesContext {
 }
 
 // export the Marker React component from this module
-export class Route extends React.Component<RoutesProps, object> {
+export class Route extends React.PureComponent<RoutesProps, object> {
   // define the context types that are passed down from a <HEREMap> instance
   public static contextTypes = {
     map: PropTypes.object,
@@ -50,9 +49,6 @@ export class Route extends React.Component<RoutesProps, object> {
 
   private route: H.geo.LineString;
   private routeLine: H.map.Polyline;
-  public shouldComponentUpdate(nextProps: RoutesProps, nextState: {}): boolean {
-    return shallowCompare(this, nextProps, nextState)
-  }
   // remove the marker on unmount of the component
   public componentWillUnmount() {
     const { map, routesGroup } = this.context;
@@ -63,6 +59,7 @@ export class Route extends React.Component<RoutesProps, object> {
   }
 
   public render(): JSX.Element {
+    // WARNING: Pure component will not re-render if context changes.
     const { map, routesGroup } = this.context;
     if (map) {
       if (this.routeLine) {
