@@ -119,7 +119,9 @@ export class HEREMap
     if (markersGroups[group]) {
       markersGroups[group].removeObject(marker);
       if (markersGroups[group].getObjects().length === 0) {
-        map.removeObject(markersGroups[group]);
+        if (map.getObjects().length > 0) {
+          map.removeObject(markersGroups[group]);
+        }
         markersGroups[group] = null;
       }
     }
@@ -256,6 +258,7 @@ export class HEREMap
   public componentWillUnmount() {
     // make the map resize when the window gets resized
     window.removeEventListener("resize", this.debouncedResizeMap);
+    this.getMap().dispose();
   }
   // change the zoom and center automatically if the props get changed
   public componentWillReceiveProps(nextProps: HEREMapProps) {
