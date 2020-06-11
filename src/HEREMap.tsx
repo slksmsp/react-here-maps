@@ -81,6 +81,8 @@ export class HEREMap
   constructor(props: HEREMapProps, context: object) {
     super(props, context);
 
+    this.unmounted = false
+
     // bind all event handling methods to this
     this.resizeMap = this.resizeMap.bind(this);
 
