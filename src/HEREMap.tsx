@@ -2,7 +2,6 @@ import { debounce, uniqueId } from "lodash";
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import * as isEqual from "react-fast-compare";
 
 import { Options } from "jsdom";
 import HMapMethods from "./mixins/h-map-methods";
@@ -180,7 +179,6 @@ export class HEREMap
         interactive,
         zoom,
         lg,
-        routes,
         useSatellite,
         trafficLayer,
         onMapAvailable,
@@ -276,18 +274,26 @@ export class HEREMap
     const props = this.props;
     const map = this.getMap();
     if (!map) { return; }
-    if (!isEqual(nextProps, props)) {
+
+    if (props.trafficLayer !== nextProps.trafficLayer ||
+      props.useSatellite !== nextProps.useSatellite) {
       if (nextProps.trafficLayer) {
         if (nextProps.useSatellite) {
-          map.setBaseLayer(this.defaultLayers.satellite.traffic); } else {
+          map.setBaseLayer(this.defaultLayers.satellite.traffic);
+        } else {
           map.setBaseLayer(this.defaultLayers.normal.traffic);
         }
       } else {
-          if (nextProps.useSatellite) {
-            map.setBaseLayer(this.defaultLayers.satellite.map); } else {
-            map.setBaseLayer(this.defaultLayers.normal.map);
-          }
+        if (nextProps.useSatellite) {
+          map.setBaseLayer(this.defaultLayers.satellite.map);
+        } else {
+          map.setBaseLayer(this.defaultLayers.normal.map);
+        }
       }
+    }
+
+    if (props.transportData !== nextProps.transportData ||
+      props.congestion !== nextProps.congestion) {
       if (nextProps.transportData) {
         if (nextProps.congestion) {
           map.removeLayer(this.truckOverlayLayer);
@@ -300,6 +306,9 @@ export class HEREMap
         map.removeLayer(this.truckOverCongestionLayer);
         map.removeLayer(this.truckOverlayLayer);
       }
+    }
+
+    if (props.incidentsLayer !== nextProps.incidentsLayer) {
       if (nextProps.incidentsLayer) {
         map.addLayer(this.defaultLayers.incidents);
       } else {
