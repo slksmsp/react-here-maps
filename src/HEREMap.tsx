@@ -75,9 +75,13 @@ export class HEREMap
   public truckOverCongestionLayer: H.map.layer.TileLayer;
   public defaultLayers: any;
 
+  private unmounted: boolean;
+
   private debouncedResizeMap: any;
   constructor(props: HEREMapProps, context: object) {
     super(props, context);
+
+    this.unmounted = false
 
     // bind all event handling methods to this
     this.resizeMap = this.resizeMap.bind(this);
@@ -164,6 +168,10 @@ export class HEREMap
     const stylesheetUrl = `${secure === true ? "https:" : ""}//js.api.here.com/v3/3.0/mapsjs-ui.css`;
     getLink(stylesheetUrl, "HERE Maps UI");
     onAllLoad(() => {
+      if (this.unmounted) {
+        return
+      }
+
       const {
         appId,
         appCode,
@@ -256,9 +264,12 @@ export class HEREMap
   }
 
   public componentWillUnmount() {
+    this.unmounted = true
     // make the map resize when the window gets resized
     window.removeEventListener("resize", this.debouncedResizeMap);
-    this.getMap().dispose();
+    if (this.getMap()) {
+      this.getMap().dispose();
+    }
   }
   // change the zoom and center automatically if the props get changed
   public componentWillReceiveProps(nextProps: HEREMapProps) {
