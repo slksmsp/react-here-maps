@@ -2,7 +2,6 @@ import { debounce, uniqueId } from "lodash";
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import * as isEqual from "react-fast-compare";
 
 import { Options } from "jsdom";
 import HMapMethods from "./mixins/h-map-methods";
@@ -75,9 +74,13 @@ export class HEREMap
   public truckOverCongestionLayer: H.map.layer.TileLayer;
   public defaultLayers: any;
 
+  private unmounted: boolean;
+
   private debouncedResizeMap: any;
   constructor(props: HEREMapProps, context: object) {
     super(props, context);
+
+    this.unmounted = false
 
     // bind all event handling methods to this
     this.resizeMap = this.resizeMap.bind(this);
@@ -119,7 +122,9 @@ export class HEREMap
     if (markersGroups[group]) {
       markersGroups[group].removeObject(marker);
       if (markersGroups[group].getObjects().length === 0) {
-        map.removeObject(markersGroups[group]);
+        if (map.getObjects().length > 0) {
+          map.removeObject(markersGroups[group]);
+        }
         markersGroups[group] = null;
       }
     }
@@ -162,6 +167,10 @@ export class HEREMap
     const stylesheetUrl = `${secure === true ? "https:" : ""}//js.api.here.com/v3/3.0/mapsjs-ui.css`;
     getLink(stylesheetUrl, "HERE Maps UI");
     onAllLoad(() => {
+      if (this.unmounted) {
+        return
+      }
+
       const {
         appId,
         appCode,
@@ -170,7 +179,6 @@ export class HEREMap
         interactive,
         zoom,
         lg,
-        routes,
         useSatellite,
         trafficLayer,
         onMapAvailable,
@@ -254,26 +262,38 @@ export class HEREMap
   }
 
   public componentWillUnmount() {
+    this.unmounted = true
     // make the map resize when the window gets resized
     window.removeEventListener("resize", this.debouncedResizeMap);
+    if (this.getMap()) {
+      this.getMap().dispose();
+    }
   }
   // change the zoom and center automatically if the props get changed
   public componentWillReceiveProps(nextProps: HEREMapProps) {
     const props = this.props;
     const map = this.getMap();
     if (!map) { return; }
-    if (!isEqual(nextProps, props)) {
+
+    if (props.trafficLayer !== nextProps.trafficLayer ||
+      props.useSatellite !== nextProps.useSatellite) {
       if (nextProps.trafficLayer) {
         if (nextProps.useSatellite) {
-          map.setBaseLayer(this.defaultLayers.satellite.traffic); } else {
+          map.setBaseLayer(this.defaultLayers.satellite.traffic);
+        } else {
           map.setBaseLayer(this.defaultLayers.normal.traffic);
         }
       } else {
-          if (nextProps.useSatellite) {
-            map.setBaseLayer(this.defaultLayers.satellite.map); } else {
-            map.setBaseLayer(this.defaultLayers.normal.map);
-          }
+        if (nextProps.useSatellite) {
+          map.setBaseLayer(this.defaultLayers.satellite.map);
+        } else {
+          map.setBaseLayer(this.defaultLayers.normal.map);
+        }
       }
+    }
+
+    if (props.transportData !== nextProps.transportData ||
+      props.congestion !== nextProps.congestion) {
       if (nextProps.transportData) {
         if (nextProps.congestion) {
           map.removeLayer(this.truckOverlayLayer);
@@ -286,6 +306,9 @@ export class HEREMap
         map.removeLayer(this.truckOverCongestionLayer);
         map.removeLayer(this.truckOverlayLayer);
       }
+    }
+
+    if (props.incidentsLayer !== nextProps.incidentsLayer) {
       if (nextProps.incidentsLayer) {
         map.addLayer(this.defaultLayers.incidents);
       } else {
