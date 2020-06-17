@@ -264,6 +264,7 @@ export class HEREMap
   public componentWillUnmount() {
     this.unmounted = true
     // make the map resize when the window gets resized
+    this.debouncedResizeMap.cancel()
     window.removeEventListener("resize", this.debouncedResizeMap);
     if (this.getMap()) {
       this.getMap().dispose();
