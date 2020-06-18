@@ -11,10 +11,17 @@ var tsProject = ts.createProject('tsconfig.json', {
   target: "ES3",
 });
 
-// default task
-gulp.task('default', ['transpile'], function() {
-
+// transpilation task from typescript to es5 javascript
+gulp.task('transpile', function() {
+  return gulp.src(['src/**/*.ts', 'src/**/*.tsx', 'typings/index.d.ts', 'node_modules/typescript/lib/lib.es6.d.ts'], { allowEmpty: true })
+    .pipe(tsProject())
+    .pipe(gulp.dest('dist'));
 });
+
+// default task
+gulp.task('default', gulp.series('transpile', function(done) {
+  done()
+}));
 
 gulp.task('watch', function () {
   // Endless stream mode
@@ -23,12 +30,7 @@ gulp.task('watch', function () {
   });
 });
 
-// transpilation task from typescript to es5 javascript
-gulp.task('transpile', function() {
-  return gulp.src(['src/**/*.ts', 'src/**/*.tsx', 'typings/index.d.ts', 'node_modules/typescript/lib/lib.es6.d.ts'])
-    .pipe(tsProject())
-    .pipe(gulp.dest('dist'));
-});
+
 
 // copies all the static files from the demo to the build directories
 gulp.task('demo-copy', function() {
@@ -44,8 +46,8 @@ gulp.task('demo-scss', function() {
 });
 
 // generates all the demo files in the build directory
-gulp.task('demo', ['default', 'demo-copy', 'demo-scss'], function() {
+gulp.task('demo', gulp.series('default', 'demo-copy', 'demo-scss', function() {
   return gulp.src('demo/index.tsx')
     .pipe(webpackStream(require('./webpack/webpack.demo.js'), webpack))
     .pipe(gulp.dest('docs/'));
-});
+}));
