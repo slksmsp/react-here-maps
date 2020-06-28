@@ -75,6 +75,9 @@ export class Marker extends React.Component<MarkerProps, object> {
       ));
       this.marker.setIcon(getDomMarkerIcon(html));
     }
+    if(!nextChildProps && !childProps && (nextProps.bitmap)) {
+      this.marker.setIcon(getMarkerIcon(nextProps.bitmap))
+    }
     if (nextProps.data !== this.props.data) {
       this.marker.setData(nextProps.data);
     }
