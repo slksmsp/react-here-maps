@@ -1,6 +1,6 @@
 {
   "name": "@impargo/react-here-maps",
-  "version": "1.5.91",
+  "version": "1.5.92",
   "description": "React.js HERE Maps component",
   "main": "dist/main.js",
   "scripts": {
