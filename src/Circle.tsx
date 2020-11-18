@@ -49,7 +49,7 @@ export class Circle extends React.Component<CircleProps, object> {
 
   // remove the circle on unmount of the component
   public componentWillUnmount() {
-    const {map} = this.context;
+    const { map } = this.context;
 
     if (this.circle) {
       map.removeObject(this.circle);
@@ -57,7 +57,7 @@ export class Circle extends React.Component<CircleProps, object> {
   }
 
   public render(): JSX.Element {
-    const {map} = this.context;
+    const { map } = this.context;
 
     if (map && !this.circle) {
       this.addCircleToMap();

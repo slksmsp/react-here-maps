@@ -20,7 +20,7 @@ export function mixin(behaviour: any, sharedBehaviour: any = {}) {
       );
     }
 
-    Object.defineProperty(workingClass.prototype, typeTag, {value: true});
+    Object.defineProperty(workingClass.prototype, typeTag, { value: true });
 
     // attach static behaviour
     for (const property of sharedKeys) {

@@ -2,8 +2,8 @@
 import Promise = require("bluebird");
 import "core-js";
 import { assignIn, forEach } from "lodash";
-import getScriptMap from "./get-script-map";
 import getLink from "./get-link";
+import getScriptMap from "./get-script-map";
 
 // declare an interface for the object that is
 // used to describe each script and stored in the
@@ -177,12 +177,12 @@ export function getScript(url: string, name: string): ScriptState {
  * @returns a promise that resolves once all scripts have been loaded.
  */
 
-export const loadScriptsStandAlone = (secure = true) => new Promise(resolve => {
+export const loadScriptsStandAlone = (secure = true) => new Promise((resolve) => {
   cache(getScriptMap(secure));
   const stylesheetUrl = `${secure ? "https:" : ""}//js.api.here.com/v3/3.0/mapsjs-ui.css`;
   getLink(stylesheetUrl, "HERE Maps UI");
   onAllLoad(resolve);
-})
+});
 
 // also make cache the default export
 export default cache;

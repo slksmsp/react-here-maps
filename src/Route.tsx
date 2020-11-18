@@ -16,10 +16,10 @@ export interface MapStyles {
 // declare an interface containing the required and potential
 // props that can be passed to the HEREMap Marker component
 export interface RoutesProps {
-    points?: Coordinates[];
-    data?: object;
-    zIndex?: number;
-    mapStyles?: MapStyles;
+  points?: Coordinates[];
+  data?: object;
+  zIndex?: number;
+  mapStyles?: MapStyles;
 }
 
 // declare an interface containing the potential context parameters
@@ -47,11 +47,11 @@ export class Route extends React.PureComponent<RoutesProps, object> {
 
   public context: RoutesContext;
 
-  private route: H.geo.LineString;
+  // private route: H.geo.LineString;
   private routeLine: H.map.Polyline;
   // remove the marker on unmount of the component
   public componentWillUnmount() {
-    const { map, routesGroup } = this.context;
+    const { routesGroup } = this.context;
 
     if (this.routeLine) {
       routesGroup.removeObject(this.routeLine);
@@ -70,12 +70,9 @@ export class Route extends React.PureComponent<RoutesProps, object> {
     return null;
   }
 
-  private addRouteToMap(props: RoutesProps){
-    const {
-      map,
-      routesGroup,
-    } = this.context;
-    const { mapStyles, data, zIndex, points } = props
+  private addRouteToMap(props: RoutesProps) {
+    const { routesGroup } = this.context;
+    const { mapStyles, data, zIndex, points } = props;
     if (routesGroup) {
       let route: H.geo.LineString;
       let routeLine: H.map.Polyline;
@@ -84,9 +81,9 @@ export class Route extends React.PureComponent<RoutesProps, object> {
         const { lat, lon } = point;
         route.pushPoint(new H.geo.Point(lat, lon));
       });
-      routeLine = new H.map.Polyline(route, {style: mapStyles.style, arrows: mapStyles.arrows, zIndex, data });
+      routeLine = new H.map.Polyline(route, { style: mapStyles.style, arrows: mapStyles.arrows, zIndex, data });
       routesGroup.addObject(routeLine);
-      this.route = route;
+      // this.route = route;
       this.routeLine = routeLine;
     }
   }
