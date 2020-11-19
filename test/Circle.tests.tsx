@@ -28,6 +28,7 @@ describe("<HEREMap />", () => {
       // need to use full DOM rendering here to access lifecycle methods
       wrapper = mount<HEREMapProps, HEREMapState>((
         <HEREMap
+          apiKey=""
           appId="NoiW7CS2CC05ppu95hyL"
           appCode="28L997fKdiJiY7TVVEsEGQ"
           center={center}
@@ -63,8 +64,8 @@ describe("<HEREMap />", () => {
         },
       });
 
-      const {state} = wrapper.instance();
-      const {map} = state;
+      const { state } = instance;
+      const { map } = state;
       const objects = map.getObjects();
 
       // check that there is one object at least
@@ -98,8 +99,8 @@ describe("<HEREMap />", () => {
         },
       });
 
-      const {state} = wrapper.instance();
-      const {map} = state;
+      const { state } = instance;
+      const { map } = state;
       const objects = map.getObjects();
       const circle = first(objects);
 
@@ -134,8 +135,8 @@ describe("<HEREMap />", () => {
         },
       });
 
-      const {state} = wrapper.instance();
-      const {map} = state;
+      const { state } = instance;
+      const { map } = state;
       const objects = map.getObjects();
 
       // check that there is one object at least
@@ -144,7 +145,7 @@ describe("<HEREMap />", () => {
       const circle = first<any>(objects) as H.map.Circle;
 
       // check center of circle, using equals method of the H.geo.Point class
-      chai.expect(circle.getCenter().equals({lat: 0, lng: 0})).to.be.true;
+      chai.expect(circle.getCenter().equals({ lat: 0, lng: 0 })).to.be.true;
 
       circleWrapper.unmount();
     });
@@ -174,8 +175,8 @@ describe("<HEREMap />", () => {
         },
       });
 
-      const {state} = wrapper.instance();
-      const {map} = state;
+      const { state } = instance;
+      const { map } = state;
       const objects = map.getObjects();
 
       // check that there is one object at least
@@ -217,8 +218,8 @@ describe("<HEREMap />", () => {
         },
       });
 
-      const {state} = wrapper.instance();
-      const {map} = state;
+      const { state } = instance;
+      const { map } = state;
       const objects = map.getObjects();
 
       // check that there is one object at least
@@ -273,8 +274,8 @@ describe("<HEREMap />", () => {
         },
       });
 
-      const {state} = wrapper.instance();
-      const {map} = state;
+      const { state } = instance;
+      const { map } = state;
       const objects = map.getObjects();
 
       // check that there is one object at least
@@ -283,7 +284,7 @@ describe("<HEREMap />", () => {
       const circle = first<any>(objects) as H.map.Circle;
 
       // check center of circle, using equals method of the H.geo.Point class
-      chai.expect(circle.getCenter().equals({lat: 0, lng: 0})).to.equal(true);
+      chai.expect(circle.getCenter().equals({ lat: 0, lng: 0 })).to.equal(true);
 
       // change the radius to something other than the initial value
       circleWrapper.setProps({
@@ -294,7 +295,7 @@ describe("<HEREMap />", () => {
       chai.expect(Circle.prototype.componentWillReceiveProps).to.have.property("callCount", 1);
 
       // check the new center of the circle, using equals method of the H.geo.Point class
-      chai.expect(circle.getCenter().equals({lat: 1, lng: 0})).to.equal(true);
+      chai.expect(circle.getCenter().equals({ lat: 1, lng: 0 })).to.equal(true);
 
       circleWrapper.unmount();
 

@@ -3,7 +3,7 @@ import mixin from "../utils/mixin";
 
 export const HMapMethods = mixin({
   // return the HTMLElement representing this HEREMap component
-  getElement(): Element {
+  getElement(): Element | Text {
     return ReactDOM.findDOMNode(this);
   },
 

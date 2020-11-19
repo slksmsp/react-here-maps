@@ -183,7 +183,8 @@ export class HEREMap
       this.truckOverlayLayer = new H.map.layer.TileLayer(truckOverlayProvider);
       this.truckOverCongestionLayer = new H.map.layer.TileLayer(truckOverlayCongestionProvider);
       this.trafficOverlayLayer = new H.map.layer.TileLayer(trafficOverlayProvider);
-      const hereMapEl = ReactDOM.findDOMNode(this);
+
+      const hereMapEl = ReactDOM.findDOMNode(this) as Element;
       const baseLayer = this.defaultLayers.normal.map;
       const map = new H.Map(
         hereMapEl.querySelector(".map-container"),
@@ -194,12 +195,11 @@ export class HEREMap
           zoom,
         },
       );
+      // Note: Types can be fixed by upgrading to new 3.1 API and waiting for:
+      // - https://github.com/DefinitelyTyped/DefinitelyTyped/pull/49662
       // @ts-ignore
       const routesProvider = new H.map.provider.LocalObjectProvider();
       this.routesLayer = new H.map.layer.ObjectLayer(routesProvider);
-      // add a circle to this provider the circle will appear under the buildings
-      // add the layer to the map
-      map.addLayer(this.routesLayer);
       map.addLayer(this.routesLayer);
       if (this.props.transportData) {
         if (congestion) {
