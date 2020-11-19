@@ -9,13 +9,6 @@ import * as isEqual from "react-fast-compare";
 import getDomMarkerIcon from "./utils/get-dom-marker-icon";
 import getMarkerIcon from "./utils/get-marker-icon";
 
-class MapMissing extends Error {
-  constructor () {
-    super('Map has to be loaded before performing this action')
-  }
-}
-
-
 // declare an interface containing the required and potential
 // props that can be passed to the HEREMap Marker componengetMartkerIdt
 export interface MarkerProps extends H.map.Marker.Options, H.geo.IPoint {
@@ -41,7 +34,7 @@ export class Marker extends React.Component<MarkerProps, object> {
     map: PropTypes.object,
     removeFromMarkerGroup: PropTypes.func,
   };
-  public static defaultProps = {draggable: false, group: 'default'};
+  public static defaultProps = { draggable: false, group: "default" };
   public context: MarkerContext;
 
   private marker: H.map.DomMarker | H.map.Marker;
@@ -75,8 +68,8 @@ export class Marker extends React.Component<MarkerProps, object> {
       ));
       this.marker.setIcon(getDomMarkerIcon(html));
     }
-    if(!nextChildProps && !childProps && (nextProps.bitmap)) {
-      this.marker.setIcon(getMarkerIcon(nextProps.bitmap))
+    if (!nextChildProps && !childProps && (nextProps.bitmap)) {
+      this.marker.setIcon(getMarkerIcon(nextProps.bitmap));
     }
     if (nextProps.data !== this.props.data) {
       this.marker.setData(nextProps.data);
@@ -102,7 +95,7 @@ export class Marker extends React.Component<MarkerProps, object> {
   }
 
   public render(): JSX.Element {
-    const {map} = this.context;
+    const { map } = this.context;
     if (map && !this.marker) {
       this.addMarkerToMap();
     }
@@ -113,7 +106,7 @@ export class Marker extends React.Component<MarkerProps, object> {
   private renderChildren(props: MarkerProps) {
     const { addToMarkerGroup, map } = this.context;
     if (!map) {
-      throw new MapMissing()
+      throw new Error("Map has to be loaded before performing this action");
     }
 
     // if children are provided, we render the provided react
@@ -130,7 +123,7 @@ export class Marker extends React.Component<MarkerProps, object> {
     // then create a dom marker instance and attach it to the map,
     // provided via context
     const { lat, lng } = props;
-    const marker = new H.map.DomMarker({lat, lng}, {icon});
+    const marker = new H.map.DomMarker({ lat, lng }, { icon });
     marker.draggable = props.draggable;
     marker.setData(props.data);
     addToMarkerGroup(marker, props.group);
@@ -140,7 +133,7 @@ export class Marker extends React.Component<MarkerProps, object> {
   private addMarkerToMap() {
     const { addToMarkerGroup, map } = this.context;
     if (!map) {
-      throw new MapMissing()
+      throw new Error("Map has to be loaded before performing this action");
     }
 
     const {
@@ -160,11 +153,11 @@ export class Marker extends React.Component<MarkerProps, object> {
       const icon = getMarkerIcon(bitmap);
 
       // then create a normal marker instance and attach it to the map
-      marker = new H.map.Marker({lat, lng}, {icon});
+      marker = new H.map.Marker({ lat, lng }, { icon });
       addToMarkerGroup(marker, group);
     } else {
       // create a default marker at the provided location
-      marker = new H.map.Marker({lat, lng});
+      marker = new H.map.Marker({ lat, lng });
       addToMarkerGroup(marker, group);
     }
 

@@ -3,7 +3,6 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Options } from "jsdom";
 import HMapMethods from "./mixins/h-map-methods";
 import cache, { onAllLoad } from "./utils/cache";
 import getLink from "./utils/get-link";
@@ -54,10 +53,10 @@ export class HEREMap
   extends React.Component<HEREMapProps, HEREMapState>
   implements React.ChildContextProvider<HEREMapChildContext> {
   public static childContextTypes = {
-    map: PropTypes.object,
-    routesGroup: PropTypes.object,
     addToMarkerGroup: PropTypes.func,
+    map: PropTypes.object,
     removeFromMarkerGroup: PropTypes.func,
+    routesGroup: PropTypes.object,
   };
 
   // add typedefs for the HMapMethods mixin
@@ -80,7 +79,7 @@ export class HEREMap
   constructor(props: HEREMapProps, context: object) {
     super(props, context);
 
-    this.unmounted = false
+    this.unmounted = false;
 
     // bind all event handling methods to this
     this.resizeMap = this.resizeMap.bind(this);
@@ -96,21 +95,21 @@ export class HEREMap
     const { map } = this.state;
     return map.screenToGeo(x, y);
   }
-  public zoomOnMarkers(animate: boolean = true, group: string = 'default') {
+  public zoomOnMarkers(animate: boolean = true, group: string = "default") {
     const { map, markersGroups } = this.state;
     if (!markersGroups[group]) { return; }
-    const viewBounds = markersGroups[group].getBounds() ;
+    const viewBounds = markersGroups[group].getBounds();
     if (viewBounds) { map.setViewBounds(viewBounds, animate); }
   }
-  public zoomOnMarkersSet(markersSet: Array<H.map.DomMarker>, animate: boolean = true){
+  public zoomOnMarkersSet(markersSet: H.map.DomMarker[], animate: boolean = true) {
     const { map } = this.state;
     const markersGroupSet = new H.map.Group();
-    markersSet.map(m => markersGroupSet.addObject(m));
+    markersSet.map((m) => markersGroupSet.addObject(m));
     const viewBounds = markersGroupSet.getBounds();
     if (viewBounds) { map.setViewBounds(viewBounds, animate); }
   }
   public addToMarkerGroup(marker: H.map.Marker, group: string) {
-    const { map, markersGroups } = this.state
+    const { map, markersGroups } = this.state;
     if (!markersGroups[group]) {
       markersGroups[group] = new H.map.Group();
       map.addObject(markersGroups[group]);
@@ -118,7 +117,7 @@ export class HEREMap
     markersGroups[group].addObject(marker);
   }
   public removeFromMarkerGroup(marker: H.map.Marker, group: string) {
-    const { map, markersGroups } = this.state
+    const { map, markersGroups } = this.state;
     if (markersGroups[group]) {
       markersGroups[group].removeObject(marker);
       if (markersGroups[group].getObjects().length === 0) {
@@ -130,10 +129,10 @@ export class HEREMap
     }
   }
   public getChildContext() {
-    const {map, routesGroup} = this.state;
+    const { map, routesGroup } = this.state;
     const addToMarkerGroup = this.addToMarkerGroup;
     const removeFromMarkerGroup = this.removeFromMarkerGroup;
-    return {map, addToMarkerGroup, removeFromMarkerGroup, routesGroup};
+    return { map, addToMarkerGroup, removeFromMarkerGroup, routesGroup };
   }
   public getTruckLayerProvider(congestion: boolean): H.map.provider.ImageTileProvider.Options {
     const { appCode, appId } = this.props;
@@ -142,19 +141,19 @@ export class HEREMap
       min: 8,
       getURL(col, row, level) {
         return ["https://",
-        "1.base.maps.cit.api.here.com/maptile/2.1/truckonlytile/newest/normal.day/",
-        level,
-        "/",
-        col,
-        "/",
-        row,
-        "/256/png8",
-        "?style=fleet",
-        "&app_code=",
-        appCode,
-        "&app_id=",
-        appId,
-        congestion ? "&congestion" : "",
+          "1.base.maps.cit.api.here.com/maptile/2.1/truckonlytile/newest/normal.day/",
+          level,
+          "/",
+          col,
+          "/",
+          row,
+          "/256/png8",
+          "?style=fleet",
+          "&app_code=",
+          appCode,
+          "&app_id=",
+          appId,
+          congestion ? "&congestion" : "",
         ].join("");
       },
     };
@@ -168,7 +167,7 @@ export class HEREMap
     getLink(stylesheetUrl, "HERE Maps UI");
     onAllLoad(() => {
       if (this.unmounted) {
-        return
+        return;
       }
 
       const {
@@ -202,7 +201,7 @@ export class HEREMap
 
       this.truckOverlayLayer = new H.map.layer.TileLayer(truckOverlayProvider);
       this.truckOverCongestionLayer = new H.map.layer.TileLayer(truckOverlayCongestionProvider);
-      const hereMapEl = ReactDOM.findDOMNode(this);
+      const hereMapEl = ReactDOM.findDOMNode(this) as Element;
       const baseLayer = this.defaultLayers.normal.map;
       const map = new H.Map(
         hereMapEl.querySelector(".map-container"),
@@ -232,7 +231,7 @@ export class HEREMap
         // create the default UI for the map
         ui = H.ui.UI.createDefault(map, this.defaultLayers, language);
         if (disableMapSettings) {
-            ui.removeControl("mapsettings");
+          ui.removeControl("mapsettings");
         }
         this.setState({
           behavior,
@@ -262,9 +261,9 @@ export class HEREMap
   }
 
   public componentWillUnmount() {
-    this.unmounted = true
+    this.unmounted = true;
     // make the map resize when the window gets resized
-    this.debouncedResizeMap.cancel()
+    this.debouncedResizeMap.cancel();
     window.removeEventListener("resize", this.debouncedResizeMap);
     if (this.getMap()) {
       this.getMap().dispose();
@@ -321,11 +320,11 @@ export class HEREMap
   public render() {
     const { children } = this.props;
     return (
-      <div className="heremap" style={{height: "100%"}}>
+      <div className="heremap" style={{ height: "100%" }}>
         <div
           className="map-container"
           id={`map-container-${uniqueId()}`}
-          style={{height: "100%"}}
+          style={{ height: "100%" }}
         >
           {children}
         </div>
