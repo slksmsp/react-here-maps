@@ -30,6 +30,7 @@ describe("<HEREMap />", () => {
         // need to use full DOM rendering here to access lifecycle methods
         wrapper = mount<HEREMapProps, HEREMapState>((
           <HEREMap
+            apiKey=""
             appId="NoiW7CS2CC05ppu95hyL"
             appCode="28L997fKdiJiY7TVVEsEGQ"
             center={center}
@@ -53,7 +54,7 @@ describe("<HEREMap />", () => {
         // mount a marker to the HEREMap component
         const markerWrapper = mount((
           <Marker {...center}>
-            <div className="circle-marker"/>
+            <div className="circle-marker" />
           </Marker>
         ), {
           context: {
@@ -61,8 +62,8 @@ describe("<HEREMap />", () => {
           },
         });
 
-        const {state} = instance;
-        const {map} = state;
+        const { state } = instance;
+        const { map } = state;
         const objects = map.getObjects();
 
         // check that there is one object at least
@@ -84,7 +85,7 @@ describe("<HEREMap />", () => {
         // mount a marker to the HEREMap component
         const markerWrapper = mount((
           <Marker {...center}>
-            <div className="circle-marker"/>
+            <div className="circle-marker" />
           </Marker>
         ), {
           context: {
@@ -92,8 +93,8 @@ describe("<HEREMap />", () => {
           },
         });
 
-        const {state} = wrapper.instance();
-        const {map} = state;
+        const { state } = instance;
+        const { map } = state;
         const objects = map.getObjects();
         const thisMarker = first(objects);
 
@@ -116,7 +117,7 @@ describe("<HEREMap />", () => {
         // mount a marker to the HEREMap component
         const markerWrapper = mount((
           <Marker {...center}>
-            <div className="circle-marker"/>
+            <div className="circle-marker" />
           </Marker>
         ), {
           context: {
@@ -149,7 +150,7 @@ describe("<HEREMap />", () => {
         // mount a marker to the HEREMap component
         const markerWrapper = mount((
           <Marker {...center}>
-            <div className="circle-marker"/>
+            <div className="circle-marker" />
           </Marker>
         ), {
           context: {
@@ -157,8 +158,8 @@ describe("<HEREMap />", () => {
           },
         });
 
-        const {state} = wrapper.instance();
-        const {map} = state;
+        const { state } = instance;
+        const { map } = state;
         const objects = map.getObjects();
 
         // check that there is one object at least
@@ -167,7 +168,7 @@ describe("<HEREMap />", () => {
         const marker = first<any>(objects) as H.map.DomMarker;
 
         // check position of marker, using equals method of the H.geo.Point class
-        chai.expect(marker.getPosition().equals({lat: 0, lng: 0})).to.equal(true);
+        chai.expect(marker.getPosition().equals({ lat: 0, lng: 0 })).to.equal(true);
 
         // change the radius to something other than the initial value
         markerWrapper.setProps({
@@ -178,7 +179,7 @@ describe("<HEREMap />", () => {
         chai.expect(Marker.prototype.componentWillReceiveProps).to.have.property("callCount", 1);
 
         // check the new radius of the circle
-        chai.expect(marker.getPosition().equals({lat: 1, lng: 0})).to.equal(true);
+        chai.expect(marker.getPosition().equals({ lat: 1, lng: 0 })).to.equal(true);
 
         markerWrapper.unmount();
 
@@ -212,6 +213,7 @@ describe("<HEREMap />", () => {
         // need to use full DOM rendering here to access lifecycle methods
         wrapper = mount<HEREMapProps, HEREMapState>((
           <HEREMap
+            apiKey=""
             appId="NoiW7CS2CC05ppu95hyL"
             appCode="28L997fKdiJiY7TVVEsEGQ"
             center={center}
@@ -238,8 +240,8 @@ describe("<HEREMap />", () => {
       });
 
       it("should be attached to the H.Map instance associated with the map", () => {
-        const {state} = wrapper.instance();
-        const {map} = state;
+        const instance: HEREMap = wrapper.instance() as HEREMap;
+        const { state: { map } } = instance;
         const objects = map.getObjects();
 
         // check that there is one object at least
@@ -247,8 +249,8 @@ describe("<HEREMap />", () => {
       });
 
       it("should attach an object to the H.Map that is an instance of H.map.Marker", () => {
-        const {state} = wrapper.instance();
-        const {map} = state;
+        const instance: HEREMap = wrapper.instance() as HEREMap;
+        const { state: { map } } = instance;
         const objects = map.getObjects();
         const thisMarker = first(objects);
 
@@ -283,6 +285,7 @@ describe("<HEREMap />", () => {
         // need to use full DOM rendering here to access lifecycle methods
         wrapper = mount<HEREMapProps, HEREMapState>((
           <HEREMap
+            apiKey=""
             appId="NoiW7CS2CC05ppu95hyL"
             appCode="28L997fKdiJiY7TVVEsEGQ"
             center={center}
@@ -304,8 +307,8 @@ describe("<HEREMap />", () => {
       });
 
       it("should be attached to the H.Map instance associated with the map", () => {
-        const {state} = wrapper.instance();
-        const {map} = state;
+        const instance: HEREMap = wrapper.instance() as HEREMap;
+        const { state: { map } } = instance;
         const objects = map.getObjects();
 
         // check that there is one object at least
@@ -313,8 +316,8 @@ describe("<HEREMap />", () => {
       });
 
       it("should attach an object to the H.Map that is an instance of H.map.Marker", () => {
-        const {state} = wrapper.instance();
-        const {map} = state;
+        const instance: HEREMap = wrapper.instance() as HEREMap;
+        const { state: { map } } = instance;
         const objects = map.getObjects();
         const thisMarker = first(objects);
 

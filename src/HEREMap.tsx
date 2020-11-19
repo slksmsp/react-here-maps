@@ -201,7 +201,7 @@ export class HEREMap
 
       this.truckOverlayLayer = new H.map.layer.TileLayer(truckOverlayProvider);
       this.truckOverCongestionLayer = new H.map.layer.TileLayer(truckOverlayCongestionProvider);
-      const hereMapEl = ReactDOM.findDOMNode(this);
+      const hereMapEl = ReactDOM.findDOMNode(this) as Element;
       const baseLayer = this.defaultLayers.normal.map;
       const map = new H.Map(
         hereMapEl.querySelector(".map-container"),
