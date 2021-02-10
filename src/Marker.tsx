@@ -151,13 +151,14 @@ export class Marker extends React.Component<MarkerProps, object> {
       // if we have an image url and no react children, create a
       // regular icon instance
       const icon = getMarkerIcon(bitmap);
-
       // then create a normal marker instance and attach it to the map
       marker = new H.map.Marker({ lat, lng }, { icon });
+      marker.setData(this.props.data);
       addToMarkerGroup(marker, group);
     } else {
       // create a default marker at the provided location
       marker = new H.map.Marker({ lat, lng });
+      marker.setData(this.props.data);
       addToMarkerGroup(marker, group);
     }
 
