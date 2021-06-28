@@ -1,5 +1,4 @@
 // import from npm
-import "core-js";
 import * as loadjs from "loadjs";
 import getScriptMap from "./get-script-map";
 
