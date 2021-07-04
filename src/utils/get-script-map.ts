@@ -36,11 +36,16 @@ export function getScriptMap(secure?: boolean): ScriptMap {
   const mapEventsScript: string =
     `${baseUrl}/mapsjs-mapevents.js`;
 
+  // default ui css
+  const uiCss: string =
+    `${baseUrl}/mapsjs-ui.css`;
+
   // return an array with all script names within
   return {
     coreScript,
     mapEventsScript,
     serviceScript,
+    uiCss,
     uiScript,
   };
 }

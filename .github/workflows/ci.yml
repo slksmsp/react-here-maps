@@ -32,7 +32,7 @@ jobs:
           with:
             path: node_modules
             key: ${{ runner.os }}-node-client-${{ hashFiles('package-lock.json') }}
-        - name: tsc
+        - name: Lint
           run: npm run lint
 
     build:
@@ -48,7 +48,7 @@ jobs:
           with:
             path: node_modules
             key: ${{ runner.os }}-node-client-${{ hashFiles('package-lock.json') }}
-        - name: Lint
+        - name: Build
           run: npm run prepublishOnly
     # test:
     #   needs: install

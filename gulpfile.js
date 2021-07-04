@@ -1,9 +1,5 @@
 var gulp = require('gulp');
-var sass = require('gulp-sass');
 var ts = require('gulp-typescript');
-var source = require('vinyl-source-stream');
-var webpack = require('webpack');
-var webpackStream = require('webpack-stream');
 var watch = require('gulp-watch');
 
 var tsProject = ts.createProject('tsconfig.json', {
@@ -29,25 +25,3 @@ gulp.task('watch', function () {
     gulp.start('transpile')
   });
 });
-
-
-
-// copies all the static files from the demo to the build directories
-gulp.task('demo-copy', function() {
-  gulp.src(['./demo/index.html', './demo/images/**/*'], { base: './demo' })
-    .pipe(gulp.dest('docs'));
-});
-
-// transpiles all the demo scss files
-gulp.task('demo-scss', function() {
-  return gulp.src(['./demo/**/*.{scss,sass}'])
-    .pipe(sass({ errLogToConsole: true }))
-    .pipe(gulp.dest('docs'));
-});
-
-// generates all the demo files in the build directory
-gulp.task('demo', gulp.series('default', 'demo-copy', 'demo-scss', function() {
-  return gulp.src('demo/index.tsx')
-    .pipe(webpackStream(require('./webpack/webpack.demo.js'), webpack))
-    .pipe(gulp.dest('docs/'));
-}));

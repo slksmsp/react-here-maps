@@ -12,6 +12,7 @@
     "coverage:report": "istanbul report",
     "coverage:post": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "prepublishOnly": "gulp",
+    "transpile": "gulp transpile",
     "lint": "tslint --config tslint.json --project tsconfig.json --type-check"
   },
   "repository": {
@@ -43,14 +44,13 @@
   },
   "homepage": "https://github.com/impargo/react-here-maps#readme",
   "devDependencies": {
-    "@types/bluebird": "^3.5.8",
     "@types/chai": "^4.0.1",
-    "@types/core-js": "^0.9.42",
     "@types/enzyme": "^3.10.8",
     "@types/heremaps": "^3.0.7",
     "@types/highlight.js": "^9.1.9",
     "@types/jquery": "^3.2.6",
     "@types/jsdom": "^11.0.1",
+    "@types/loadjs": "^4.0.0",
     "@types/lodash": "^4.14.68",
     "@types/mocha": "^2.2.41",
     "@types/node": "^14.14.8",
@@ -115,9 +115,8 @@
     "webpack-uglify-js-plugin": "^1.1.9"
   },
   "dependencies": {
-    "bluebird": "^3.4.1",
-    "core-js": "^2.4.1",
     "jsdom": "^13.2.0",
+    "loadjs": "^4.2.0",
     "lodash": "^4.15.0",
     "prop-types": "^15.6.2",
     "react-fast-compare": "^2.0.4"

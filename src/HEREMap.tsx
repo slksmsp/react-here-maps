@@ -4,10 +4,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import HMapMethods from "./mixins/h-map-methods";
-import cache, { onAllLoad } from "./utils/cache";
-import getLink from "./utils/get-link";
+import { loadScripts } from "./utils/cache";
 import getPlatform from "./utils/get-platform";
-import getScriptMap from "./utils/get-script-map";
 import { Language } from "./utils/languages";
 
 // declare an interface containing the required and potential
@@ -31,6 +29,7 @@ export interface HEREMapProps extends H.Map.Options {
   onMapAvailable?: (state: HEREMapState) => void;
   language?: string;
   congestion?: boolean;
+  onScriptLoadError?: (failedScripts: string[]) => void;
 }
 
 // declare an interface containing the potential state flags
@@ -141,11 +140,10 @@ export class HEREMap
   public componentDidMount() {
     const {
       secure,
+      onScriptLoadError,
     } = this.props;
-    cache(getScriptMap(secure === true));
-    const stylesheetUrl = `${secure === true ? "https:" : ""}//js.api.here.com/v3/3.0/mapsjs-ui.css`;
-    getLink(stylesheetUrl, "HERE Maps UI");
-    onAllLoad(() => {
+
+    loadScripts(secure).then(() => {
       if (this.unmounted) {
         return;
       }
@@ -244,7 +242,7 @@ export class HEREMap
 
       // attach the map object to the component"s state
       this.setState({ map, routesGroup: routesProvider.getRootGroup() }, () => onMapAvailable(this.state));
-    });
+    }).catch(onScriptLoadError);
   }
 
   public componentWillUnmount() {
