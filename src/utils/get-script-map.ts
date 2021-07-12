@@ -36,12 +36,17 @@ export function getScriptMap(secure?: boolean): ScriptMap {
   const mapEventsScript: string =
     `${baseUrl}/mapsjs-mapevents.js`;
 
+  // clustering module
+  const clusteringScript: string =
+    `${baseUrl}/mapsjs-clustering.js`;
+
   // default ui css
   const uiCss: string =
     `${baseUrl}/mapsjs-ui.css`;
 
   // return an array with all script names within
   return {
+    clusteringScript,
     coreScript,
     mapEventsScript,
     serviceScript,
