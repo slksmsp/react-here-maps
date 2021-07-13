@@ -1,4 +1,5 @@
 import Circle from "./Circle";
+import Cluster, { defaultClusteringOptions, ClusterProps, Datapoint } from "./Cluster";
 import HEREMap from "./HEREMap";
 import Marker from "./Marker";
 import Route from "./Route";
@@ -11,6 +12,10 @@ export {
   Language,
   Marker,
   Route,
+  Cluster,
+  ClusterProps,
+  Datapoint,
+  defaultClusteringOptions,
   loadScriptsStandAlone,
   loadScripts,
 };

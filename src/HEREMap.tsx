@@ -3,6 +3,7 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
+import { HEREMapContext } from "./context";
 import HMapMethods from "./mixins/h-map-methods";
 import { loadScripts } from "./utils/cache";
 import getPlatform from "./utils/get-platform";
@@ -313,7 +314,9 @@ export class HEREMap
           id={`map-container-${uniqueId()}`}
           style={{ height: "100%" }}
         >
-          {children}
+          {this.state.map && <HEREMapContext.Provider value={{ map: this.state.map }}>
+            {children}
+          </HEREMapContext.Provider>}
         </div>
       </div>
     );
