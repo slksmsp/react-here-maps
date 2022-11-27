@@ -252,7 +252,7 @@ export const HEREMap = forwardRef<HEREMapRef, HEREMapProps>(({
           center,
           // @ts-ignore
           engineType: useVectorTiles ? undefined : H.map.render.RenderEngine.EngineType.P2D,
-          pixelRatio: hidpi ? 2 : (window.devicePixelRatio || 1),
+          pixelRatio: hidpi ? 2 : 1,
           zoom,
         },
       );
