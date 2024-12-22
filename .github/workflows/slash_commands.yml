@@ -13,5 +13,6 @@ jobs:
       with:
         token: ${{secrets.NPM_TOKEN}}
         issue-type: pull-request
+        permission: write
         commands: |
           publish
